@@ -5,8 +5,18 @@
  */
 package default_package;
 
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.event.ActionEvent;
@@ -16,13 +26,20 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import static javafx.application.Application.launch;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -30,9 +47,18 @@ import javafx.scene.layout.VBox;
  */
 public class Main extends Application {
 
+    static String currentPlayer = "";
+    static boolean startGame;
+    static ArrayList<Jogo> jogos = new ArrayList();
+    static Jogador tmpJogador;
+    static int numjogadas=0;
     static GridPane gPane = new GridPane();
     static Button[] array1 = new Button[16];
     static Celula[] arraycelula = new Celula[16];
+    static long tempo = 0;
+    static long tempofim = 0;
+    static boolean playing=false;
+    static boolean neverplaying=true;
 
     @Override
     public void start(Stage primaryStage) {
@@ -59,11 +85,48 @@ public class Main extends Application {
         root.setTop(mnbar);
         root.setCenter(gPane);
 
+        /*mniMelhor.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                tempofim=(System.currentTimeMillis() - tempo) /1000;
+                System.out.println(tempofim + " TEMPO FINAL");
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });*/
+        mniSair.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+               default_package.Actions.close(event);
+            }
+        });
+        
+        mniJogo.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+
+                default_package.Actions.ExecuteNewGame();
+                tmpJogador = new Jogador(currentPlayer, "0", 0);
+
+              
+            }
+        });
+
+        //end
         Scene scene;
         scene = new Scene(root, 600, 450);
 
         primaryStage.setScene(scene);
         primaryStage.show();
+        Platform.setImplicitExit(false);
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+
+                default_package.Actions.close(event);
+           
+                // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
     }
 
     public static void AddButtons() {
@@ -80,7 +143,7 @@ public class Main extends Application {
             int numButton = i;
             arraycelula[i] = new Celula();
             arraycelula[i].setNum(Integer.toString(arr.get(i)));
-            //arraycelula[i].setNum(""+i);
+            // arraycelula[i].setNum(""+i);
             arraycelula[i].setPos(i);
             arraycelula[i].setMaxWidth(Double.MAX_VALUE);
             arraycelula[i].getStyleClass().add("bttemp");
@@ -96,8 +159,8 @@ public class Main extends Application {
                 arraycelula[i].setHole(true);
                 arraycelula[i].setNum(" ");
             }
+            arraycelula[i].setDisable(true);
         }
-
         for (int i = 0; i < 16; i++) {
             arraycelula[i].setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -166,6 +229,70 @@ public class Main extends Application {
                     click = "";
                 }
             });
+        }
+    }
+
+    public static int LineCounter(String fname) {
+        try {
+            LineNumberReader lnr = new LineNumberReader(new FileReader(new File(fname)));
+            lnr.skip(Long.MAX_VALUE);
+            lnr.close();
+            return lnr.getLineNumber();
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public static void ReadFile() {
+        int ct = 0;
+        File fi = new File("default_package/logs.txt");
+        int lnct = LineCounter("default_package/logs.txt");
+        String nome, data, tempo, jogadas, estado;
+
+        if (fi.exists() && lnct != 0 && lnct % 5 == 0) {
+            Jogador tempJ;
+            try {
+                FileInputStream fs = new FileInputStream("default_package/logs.txt");
+                BufferedReader br = new BufferedReader(new InputStreamReader(fs));
+                while (ct < lnct / 5) {
+                    nome = br.readLine();
+                    data = br.readLine();
+                    tempo = br.readLine();
+                    jogadas = br.readLine();
+                    estado = br.readLine();
+                    tempJ = new Jogador(nome, data, Float.parseFloat(tempo));
+                    jogos.add(new Jogo(tempJ, Integer.parseInt(jogadas), Boolean.parseBoolean(estado)));
+
+                    ct++;
+                }
+                br.close();
+                fs.close();
+
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public static void WriteFile() {
+
+        PrintWriter pw = null;
+        FileWriter in = null;
+        try {
+            in = new FileWriter("default_package/logs.txt");
+            pw = new PrintWriter(in);
+            tmpJogador = new Jogador();
+            for (int ct = 0; ct < jogos.size(); ct++) {
+                pw.write(jogos.get(ct).getJogador().getNome() + "\n");
+                pw.write(jogos.get(ct).getJogador().getData() + "\n");
+                pw.write(Float.toString(jogos.get(ct).getJogador().getTempo()) + "\n");
+                pw.write(Integer.toString(jogos.get(ct).getJogada()) + "\n");
+                pw.write(Boolean.toString(jogos.get(ct).getcompleto()) + "\n");
+            }
+
+            pw.close();
+            in.close();
+        } catch (Exception ex) {
+            pw.close();
         }
     }
 

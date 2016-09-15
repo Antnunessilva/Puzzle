@@ -9,8 +9,14 @@ and open the template in the editor.
 */
 
 .bttemp {
-    
-    -fx-padding: 3 30 3 30;
+
+    -fx-padding: 20 45 20 45;
+    -fx-margin-bottom: 5;
     -fx-text-fill: black;
+    -fx-background-color: #e7f3f9;
     -fx-font-size: 14px;
+    -fx-border-color: #71d1ff;
+    -fx-border-radius: 5px;
+    -fx-font-weight: bold;
+    
 }

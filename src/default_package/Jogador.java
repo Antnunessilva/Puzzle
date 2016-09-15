@@ -19,6 +19,11 @@ public class Jogador {
         this.data=data;
         this.tempo=tempo;
     }
+    
+        public Jogador(){
+    }
+
+    
     public String getNome(){return nome;}
     public String getData(){return data;}
     public float getTempo(){return tempo;}
