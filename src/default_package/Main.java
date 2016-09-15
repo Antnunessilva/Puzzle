@@ -5,6 +5,7 @@
  */
 package default_package;
 
+import java.awt.image.BufferedImage;
 import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,8 +15,11 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Optional;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -35,11 +39,15 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import jdk.nashorn.internal.objects.NativeDebug;
 
 /**
  *
@@ -59,10 +67,16 @@ public class Main extends Application {
     static long tempofim = 0;
     static boolean playing=false;
     static boolean neverplaying=true;
+    static boolean playerwon=false;
+   static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    static Date date = new Date();
+
+    
+    
 
     @Override
     public void start(Stage primaryStage) {
-
+ 
         primaryStage.setTitle("Puzzle");
         gPane.setPadding(new Insets(80, 80, 80, 80));
         MenuBar mnbar = new MenuBar();
@@ -88,8 +102,7 @@ public class Main extends Application {
         /*mniMelhor.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                tempofim=(System.currentTimeMillis() - tempo) /1000;
-                System.out.println(tempofim + " TEMPO FINAL");
+              
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });*/
@@ -105,7 +118,7 @@ public class Main extends Application {
             public void handle(ActionEvent e) {
 
                 default_package.Actions.ExecuteNewGame();
-                tmpJogador = new Jogador(currentPlayer, "0", 0);
+                
 
               
             }
@@ -127,24 +140,33 @@ public class Main extends Application {
                 // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
+        ReadFile();
     }
 
     public static void AddButtons() {
-        ArrayList<Integer> arr = new ArrayList<Integer>();
+      /*  ArrayList<Integer> arr = new ArrayList<Integer>();
 
         for (int i = 0; i < 16; i++) {
             arr.add(i);
         }
         Collections.shuffle(arr);
-
+*/
         int j = 1, y = 1;
         for (int i = 0; i < 16; i++) {
 
             int numButton = i;
             arraycelula[i] = new Celula();
-            arraycelula[i].setNum(Integer.toString(arr.get(i)));
-            // arraycelula[i].setNum(""+i);
+           // arraycelula[i].setNum(Integer.toString(arr.get(i)));
+        //    ImageView dm = new ImageView(new Image(Main.class.getClass().getResourceAsStream("/img/example.png")));
+       
+      // arraycelula[i].setGraphic(new ImageView(img));
+  
+          
+          
+          
+             arraycelula[i].setNum(""+i);
             arraycelula[i].setPos(i);
+            
             arraycelula[i].setMaxWidth(Double.MAX_VALUE);
             arraycelula[i].getStyleClass().add("bttemp");
             gPane.add(arraycelula[i], y, j);
@@ -245,14 +267,14 @@ public class Main extends Application {
 
     public static void ReadFile() {
         int ct = 0;
-        File fi = new File("default_package/logs.txt");
-        int lnct = LineCounter("default_package/logs.txt");
+        File fi = new File("logs.txt");
+        int lnct = LineCounter("logs.txt");
         String nome, data, tempo, jogadas, estado;
 
         if (fi.exists() && lnct != 0 && lnct % 5 == 0) {
             Jogador tempJ;
             try {
-                FileInputStream fs = new FileInputStream("default_package/logs.txt");
+                FileInputStream fs = new FileInputStream("logs.txt");
                 BufferedReader br = new BufferedReader(new InputStreamReader(fs));
                 while (ct < lnct / 5) {
                     nome = br.readLine();
@@ -271,22 +293,26 @@ public class Main extends Application {
             } catch (Exception e) {
             }
         }
+        for(Jogo j:jogos)
+        {
+            System.out.println(j.getJogador().getNome() + " " + j.getJogador().getData() + " " + j.getJogador().getTempo() + " " + j.getJogada() + " " + j.getcompleto());
+        }
     }
 
-    public static void WriteFile() {
+    public static void WriteFile(ArrayList<Jogo> j) {
 
         PrintWriter pw = null;
         FileWriter in = null;
         try {
-            in = new FileWriter("default_package/logs.txt");
+            in = new FileWriter("logs.txt");
             pw = new PrintWriter(in);
             tmpJogador = new Jogador();
-            for (int ct = 0; ct < jogos.size(); ct++) {
-                pw.write(jogos.get(ct).getJogador().getNome() + "\n");
-                pw.write(jogos.get(ct).getJogador().getData() + "\n");
-                pw.write(Float.toString(jogos.get(ct).getJogador().getTempo()) + "\n");
-                pw.write(Integer.toString(jogos.get(ct).getJogada()) + "\n");
-                pw.write(Boolean.toString(jogos.get(ct).getcompleto()) + "\n");
+            for (int ct = 0; ct < j.size(); ct++) {
+                pw.write(j.get(ct).getJogador().getNome() + "\n");
+                pw.write(j.get(ct).getJogador().getData() + "\n");
+                pw.write(Float.toString(j.get(ct).getJogador().getTempo()) + "\n");
+                pw.write(Integer.toString(j.get(ct).getJogada()) + "\n");
+                pw.write(Boolean.toString(j.get(ct).getcompleto()) + "\n");
             }
 
             pw.close();

@@ -25,7 +25,9 @@ public class Jogador {
 
     
     public String getNome(){return nome;}
-    public String getData(){return data;}
+    public String getData(){
+        
+        return data;}
     public float getTempo(){return tempo;}
     
     public void setNome(String nome){this.nome=nome;}
