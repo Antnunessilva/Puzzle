@@ -70,6 +70,8 @@ public class Main extends Application {
     static boolean playerwon=false;
    static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     static Date date = new Date();
+    static Image img = new Image("/img/puzzle.png", true);
+    static ImageView imgview = new ImageView(img);
 
     
     
@@ -151,6 +153,7 @@ public class Main extends Application {
         }
         Collections.shuffle(arr);
 */
+      
         int j = 1, y = 1;
         for (int i = 0; i < 16; i++) {
 
@@ -160,7 +163,8 @@ public class Main extends Application {
         //    ImageView dm = new ImageView(new Image(Main.class.getClass().getResourceAsStream("/img/example.png")));
        
       // arraycelula[i].setGraphic(new ImageView(img));
-  
+           
+          //  arraycelula[0].setGraphic(imgview);
           
           
           
@@ -182,7 +186,8 @@ public class Main extends Application {
                 arraycelula[i].setNum(" ");
             }
             arraycelula[i].setDisable(true);
-        }
+        }arraycelula[0].setGraphic(imgview);
+       
         for (int i = 0; i < 16; i++) {
             arraycelula[i].setOnAction(new EventHandler<ActionEvent>() {
                 @Override
