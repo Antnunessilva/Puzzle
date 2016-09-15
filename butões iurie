@@ -1,0 +1,116 @@
+ array1[i].setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent e) {
+                    boolean norte = false, sul = false, este = false, oeste = false;
+                    Button button = (Button) e.getSource();
+                    String search = button.getText();
+                    System.out.println(button.getText());
+
+                    int x = Integer.parseInt(button.getId());
+                    System.out.println(x + " = ID ");
+                    
+                
+                    if ((x >= 0 && x < 16) ||!button.getText().equals("") ) {
+                        if (!button.getText().equals("") && x != 4 && x != 3 && x != 7 && x != 8 && x != 11 && x != 12) {
+                            if (x - 1 > 0 && array1[x - 1].getText().equals("")) {
+                                oeste = true;
+
+                            } else if (x + 1 < 16 && array1[x + 1].getText().equals("")) {
+                                este = true;
+
+                            } else if (x + 4 < 16 && array1[x + 4].getText().equals("")) {
+                                sul = true;
+
+                            } else if (x - 4 < 16 && x-4 >=0 && array1[x + 4].getText().equals("")) {
+                                sul = true;
+                            }
+                        }
+                        if (x == 3) {
+                            norte = false;
+                            sul = false;
+                            este = false;
+                            oeste = false;
+                            if (array1[x + 4].getText().equals("")) {
+                                sul = true;
+                            }
+                            if (array1[x - 1].getText().equals("")) {
+                                oeste = true;
+                            }
+                        }
+                        if (x == 7 || x == 11) {
+                            norte = false;
+                            sul = false;
+                            este = false;
+                            oeste = false;
+                            if (x - 1 > 0 && array1[x - 1].getText().equals("")) {
+                                oeste = true;
+                            } else if (x + 4 < 16 && array1[x + 4].getText().equals("")) {
+                                sul = true;
+                            } else if (x - 4 < 16 && array1[x + 4].getText().equals("")) {
+                                norte = true;
+                            }
+
+                        }
+                        if (x == 4 || x == 8 || x == 12) {
+                            norte = false;
+                            sul = false;
+                            este = false;
+                            oeste = false;
+                            if (array1[x + 1].getText().equals("")) {
+                                este = true;
+                                
+                            }
+                            if (array1[x + 4].getText().equals("")) {
+                                sul = true;
+                            }
+                            if (array1[x - 4].getText().equals("")) {
+                                norte = true;
+                            }
+
+                        }
+                    }
+                    /*else //feature futura
+                    {
+                          norte = false;
+                            sul = false;
+                            este = false;
+                            oeste = false;
+                            if(x-4)
+                    }*/
+
+                    System.out.println(norte + " = norte " + sul + " = sul " + oeste + " = oeste " + este + " = este  ");
+                    if(norte)
+                    {
+                        String temp = array1[x].getText();
+                        array1[x].setText("");
+                        array1[x-4].setText(temp);
+                        
+                    }
+                    if(sul)
+                    {
+                        String temp = array1[x].getText();
+                        array1[x].setText("");
+                        array1[x+4].setText(temp);
+                        
+                    }
+                    if(oeste)
+                    {
+                        String temp = array1[x].getText();
+                        array1[x].setText("");
+                        array1[x-1].setText(temp);
+                    }
+                    if(este)
+                    {
+                        String temp = array1[x].getText();
+                        array1[x].setText("");
+                        array1[x+1].setText(temp);
+                    }
+                    norte = false;
+                            sul = false;
+                            este = false;
+                            oeste = false;
+                }
+
+            });
+
+        }
