@@ -81,7 +81,10 @@ public class Main extends Application {
     static Date date = new Date();
     static Image img = new Image("/img/puzzle.png", true);
     static ImageView imgview = new ImageView(img);
-    
+    static String[] ints = {"0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"," "};
+    static String[] chars= {"A","B","C","D","E","F","G","H","I","J","K","L","M","N", "G", "H", " "};
+    static String[] roma= {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", " "};
+    static String[] imgs= {"img0", "img1", "img2", "img3", "img4", "img5", "img6", "img7", "img8", "img9", "img10", "img11", "img12", "img13", "img14", ""};
     static TabPane tabPane =new TabPane();
 
     
@@ -91,7 +94,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
  
         primaryStage.setTitle("Puzzle");
-        gPane.setPadding(new Insets(80, 80, 80, 80));
+       // gPane.setPadding(new Insets(80, 80, 80, 80));
         MenuBar mnbar = new MenuBar();
         Menu menuFile = new Menu("File");
         Menu menuHelp = new Menu("Info");
@@ -152,7 +155,7 @@ public class Main extends Application {
                 default_package.Actions.ExecuteNewGame();
                 switch(tipo){
                     case "Numerico":
-                        AddButtons();//enviar param com tipo
+                        AddButtons(ints);//enviar param com tipo
                         tabPane = new TabPane();
                         tabNum.setContent(gPane);
                         tabPane.getTabs().add(tabNum);
@@ -162,7 +165,7 @@ public class Main extends Application {
                         root.requestLayout();
                         break;
                     case "Alfabeto":
-                        AddButtons();//enviar param com tipo
+                        AddButtons(chars);//enviar param com tipo
                         tabPane = new TabPane();
                         tabAlf.setContent(gPane);
                         tabPane.getTabs().add(tabAlf);
@@ -173,7 +176,7 @@ public class Main extends Application {
                         
                         break;
                     case "Romanos":
-                        AddButtons();//enviar param com tipo
+                        AddButtons(roma);//enviar param com tipo
                         tabPane = new TabPane();
                         tabRom.setContent(gPane);
                         tabPane.getTabs().add(tabRom);
@@ -184,7 +187,7 @@ public class Main extends Application {
                         
                         break;
                     case "Imagem":
-                        AddButtons();//enviar param com tipo
+                        AddButtons(imgs);//enviar param com tipo
                         tabPane = new TabPane();
                         tabImg.setContent(gPane);
                         tabPane.getTabs().add(tabImg);
@@ -193,13 +196,8 @@ public class Main extends Application {
                         gPane.getStylesheets().add("css/style.css");
                         root.setCenter(tabPane);
                         root.requestLayout();
-                        
                         break;
-                
                 }
-                
-
-              
             }
         });
 
@@ -224,7 +222,7 @@ public class Main extends Application {
         ReadFile();
     }
 
-    public static void AddButtons() {
+    public static void AddButtons(String[] arr) {
       
         int j = 1, y = 1;
         for (int i = 0; i < 16; i++) {
@@ -232,7 +230,7 @@ public class Main extends Application {
             int numButton = i;
             arraycelula[i] = new Celula();
           
-            arraycelula[i].setNum(""+i);
+            arraycelula[i].setNum(arr[i]);
             arraycelula[i].setPos(i);
             
             arraycelula[i].setMaxWidth(Double.MAX_VALUE);

@@ -11,6 +11,7 @@ import static default_package.Main.dateFormat;
 import static default_package.Main.tmpJogador;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Timer;
@@ -19,6 +20,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -44,6 +46,15 @@ import javafx.util.Pair;
  * @author main4db
  */
 public class Actions { //conversão de tempo no final - na salvaguarda de dados 
+    static ObservableList<String> comboItem = 
+                FXCollections.observableArrayList(
+                    "Numerico",
+                    "Alfabeto",
+                    "Imagem",
+                    "Romanos"
+                );
+   static ComboBox comboTipo = new ComboBox(comboItem);
+   static int choice = 0;
     	public static void ExecuteNewGame(){
                 
                 Dialog<Pair<String, String>> dialog = new Dialog<>();
@@ -56,16 +67,10 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
                 grid.setVgap(10);
                 grid.setPadding(new Insets(20, 150, 10, 10));
                 TextField username = new TextField();
-                ObservableList<String> comboItem = 
-                FXCollections.observableArrayList(
-                    "Numerico",
-                    "Alfabeto",
-                    "Imagem",
-                    "Romanos"
-                );
-                ComboBox comboTipo = new ComboBox(comboItem);
+               
+               
                 comboTipo.setValue(comboItem.get(0));
-                
+              
                 
                 grid.add(new Label("Username:"), 0, 0);
                 grid.add(username, 1, 0);
@@ -129,16 +134,41 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         }
         public static void Validate()
         {
-           
-
             Alert a = new Alert(AlertType.INFORMATION);
             String[] ints = {"0","1","2","3","4","5","6","7","8","9","10","11","12","13","14"," "};
-            String[] chars= {"A","B","C","D","E","F","G","H","I","J","K","L","M","N"," "};
-            String[] Bin={"0001","0010","0011","0100","0101","0110","0111","1000","1001","1010","1011","1100","1101","1110"," ",};
+            String[] chars= {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","G", " "};
+            String[] roma= {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", " "};
+            String[] str = new String[16];
+            
+            switch(default_package.Main.tipo)
+            {
+                 case "Numerico":
+                 {
+                     str=Arrays.copyOf(ints, ints.length);
+                     break;
+                 }
+                 case "Alfabeto":
+                 {
+                     str=Arrays.copyOf(chars, chars.length);
+                     break;
+                 }
+                 case "Romanos":
+                 {
+                     str=Arrays.copyOf(roma, roma.length);
+                     break;
+                 }
+                 case "Imagem":
+                 {
+                     str=Arrays.copyOf(ints, ints.length);
+                     break;
+                 }
+            }
+            
             int count=0;
+            
             for(int i=0; i<16; i++)
             {
-                if(default_package.Main.arraycelula[i].getNum().equals(ints[i]))
+                if(default_package.Main.arraycelula[i].getNum().equals(str[i]))
                 {
                     count++;
                 }
