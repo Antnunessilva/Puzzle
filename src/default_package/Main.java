@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package default_package;
-
+//
 import java.awt.image.BufferedImage;
 import java.io.FileWriter;
 import java.io.BufferedReader;

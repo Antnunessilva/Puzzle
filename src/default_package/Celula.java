@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package default_package;
-
+//
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
