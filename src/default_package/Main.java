@@ -118,7 +118,7 @@ public class Main extends Application {
         tabMelh.setClosable(false);
         
         root.setTop(mnbar);
-        final Label label = new Label("Address Book");
+        final Label label = new Label("Jogos");
         TableColumn tcUser = new TableColumn("Jogador");
         TableColumn tcScore = new TableColumn("Pontuação");
         TableColumn tcMoves = new TableColumn("Jogadas");
