@@ -131,7 +131,6 @@ public class Main extends Application {
         table.getColumns().addAll(tcUser, tcScore, tcMoves, tcMode, tcTime,  tcDate);
         
        
- 
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
