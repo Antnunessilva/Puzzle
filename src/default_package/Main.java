@@ -65,31 +65,28 @@ public class Main extends Application {
     static boolean startGame;
     static ArrayList<Jogo> jogos = new ArrayList();
     static Jogador tmpJogador;
-    static int numjogadas=0;
+    static int numjogadas = 0;
     static BorderPane root = new BorderPane();
     static GridPane gPane = new GridPane();
     static Button[] array1 = new Button[16];
     static Celula[] arraycelula = new Celula[16];
     static long tempo = 0;
     static long tempofim = 0;
-    static String tipo="";
-    static boolean playing=false;
-    static boolean neverplaying=true;
-    static boolean playerwon=false;
+    static String tipo = "";
+    static boolean playing = false;
+    static boolean neverplaying = true;
+    static boolean playerwon = false;
     static TableView table = new TableView();
     static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     static Date date = new Date();
     static Image img = new Image("/img/puzzle.png", true);
     static ImageView imgview = new ImageView(img);
-    
-    static TabPane tabPane =new TabPane();
 
-    
-    
+    static TabPane tabPane = new TabPane();
 
     @Override
     public void start(Stage primaryStage) {
- 
+
         primaryStage.setTitle("Puzzle");
         gPane.setPadding(new Insets(80, 80, 80, 80));
         MenuBar mnbar = new MenuBar();
@@ -101,7 +98,7 @@ public class Main extends Application {
         MenuItem mniSair = new MenuItem("Sair");
 
         menuHelp.getItems().addAll(mniAutor, mniLing);
-        menuFile.getItems().addAll(mniJogo,mniSair);
+        menuFile.getItems().addAll(mniJogo, mniSair);
         mnbar.getMenus().addAll(menuFile, menuHelp);
         //
         Tab tabNum = new Tab("Numerico");
@@ -116,7 +113,7 @@ public class Main extends Application {
         tabRom.setClosable(false);
         tabImg.setClosable(false);
         tabMelh.setClosable(false);
-        
+
         root.setTop(mnbar);
         final Label label = new Label("Jogos");
         TableColumn tcUser = new TableColumn("Jogador");
@@ -128,9 +125,8 @@ public class Main extends Application {
         tcMode.setMinWidth(110);
         tcUser.setMinWidth(110);
         tcDate.setMinWidth(110);
-        table.getColumns().addAll(tcUser, tcScore, tcMoves, tcMode, tcTime,  tcDate);
-        
-       
+        table.getColumns().addAll(tcUser, tcScore, tcMoves, tcMode, tcTime, tcDate);
+
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
@@ -140,16 +136,16 @@ public class Main extends Application {
         mniSair.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-               default_package.Actions.close(event);
+                default_package.Actions.close(event);
             }
         });
-        
+
         mniJogo.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
 
                 default_package.Actions.ExecuteNewGame();
-                switch(tipo){
+                switch (tipo) {
                     case "Numerico":
                         AddButtons();//enviar param com tipo
                         tabPane = new TabPane();
@@ -169,7 +165,7 @@ public class Main extends Application {
                         gPane.getStylesheets().add("css/style.css");
                         root.setCenter(tabPane);
                         root.requestLayout();
-                        
+
                         break;
                     case "Romanos":
                         AddButtons();//enviar param com tipo
@@ -180,7 +176,7 @@ public class Main extends Application {
                         gPane.getStylesheets().add("css/style.css");
                         root.setCenter(tabPane);
                         root.requestLayout();
-                        
+
                         break;
                     case "Imagem":
                         AddButtons();//enviar param com tipo
@@ -192,13 +188,11 @@ public class Main extends Application {
                         gPane.getStylesheets().add("css/style.css");
                         root.setCenter(tabPane);
                         root.requestLayout();
-                        
-                        break;
-                
-                }
-                
 
-              
+                        break;
+
+                }
+
             }
         });
 
@@ -209,7 +203,7 @@ public class Main extends Application {
         primaryStage.setHeight(450);
 
         primaryStage.setScene(scene);
-    primaryStage.setResizable(false);
+        primaryStage.setResizable(false);
         primaryStage.show();
         Platform.setImplicitExit(false);
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -217,23 +211,23 @@ public class Main extends Application {
             public void handle(WindowEvent event) {
 
                 default_package.Actions.close(event);
-           
+
             }
         });
         ReadFile();
     }
 
     public static void AddButtons() {
-      
+
         int j = 1, y = 1;
         for (int i = 0; i < 16; i++) {
 
             int numButton = i;
             arraycelula[i] = new Celula();
-          
-            arraycelula[i].setNum(""+i);
+
+            arraycelula[i].setNum("" + i);
             arraycelula[i].setPos(i);
-            
+
             arraycelula[i].setMaxWidth(Double.MAX_VALUE);
             arraycelula[i].getStyleClass().add("bttemp");
             gPane.add(arraycelula[i], y, j);
@@ -249,7 +243,7 @@ public class Main extends Application {
                 arraycelula[i].setNum(" ");
             }
         }
-       
+
         for (int i = 0; i < 16; i++) {
             arraycelula[i].setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -262,27 +256,35 @@ public class Main extends Application {
 
                     String click = arraycelula[id].getNum();
                     try {
-                        if (arraycelula[id + 1].getHole() == true) {
-                            arraycelula[id + 1].setNum(click);
-                            arraycelula[id + 1].setHole(false);
-                            arraycelula[id + 1].setMov(true);
-                            arraycelula[id].setNum(" ");
-                            arraycelula[id].setHole(true);
-                            arraycelula[id].setMov(false);
-                            default_package.Actions.Validate();
+                        if (arraycelula[id + 1].getHole() == true && id != 11) {
+                            if (arraycelula[id + 1].getHole() == true && id != 7) {
+                                if (arraycelula[id + 1].getHole() == true && id != 3) {
+                                    arraycelula[id + 1].setNum(click);
+                                    arraycelula[id + 1].setHole(false);
+                                    arraycelula[id + 1].setMov(true);
+                                    arraycelula[id].setNum(" ");
+                                    arraycelula[id].setHole(true);
+                                    arraycelula[id].setMov(false);
+                                    default_package.Actions.Validate();
+                                }
+                            }
                         }
                     } catch (IndexOutOfBoundsException erro) {
 
                     }
                     try {
-                        if (arraycelula[id - 1].getHole() == true) {
-                            arraycelula[id - 1].setNum(click);
-                            arraycelula[id - 1].setHole(false);
-                            arraycelula[id - 1].setMov(true);
-                            arraycelula[id].setNum(" ");
-                            arraycelula[id].setHole(true);
-                            arraycelula[id].setMov(false);
-                            default_package.Actions.Validate();
+                        if (arraycelula[id - 1].getHole() == true && id != 12) {
+                            if (arraycelula[id - 1].getHole() == true && id != 8) {
+                                if (arraycelula[id - 1].getHole() == true && id != 4) {
+                                    arraycelula[id - 1].setNum(click);
+                                    arraycelula[id - 1].setHole(false);
+                                    arraycelula[id - 1].setMov(true);
+                                    arraycelula[id].setNum(" ");
+                                    arraycelula[id].setHole(true);
+                                    arraycelula[id].setMov(false);
+                                    default_package.Actions.Validate();
+                                }
+                            }
                         }
                     } catch (IndexOutOfBoundsException erro) {
 
@@ -336,7 +338,7 @@ public class Main extends Application {
         int ct = 0;
         File fi = new File("logs.txt");
         int lnct = LineCounter("logs.txt");
-        String nome, data, tempo, jogadas, estado,tipo;
+        String nome, data, tempo, jogadas, estado, tipo;
 
         if (fi.exists() && lnct != 0 && lnct % 5 == 0) {
             Jogador tempJ;
@@ -351,7 +353,7 @@ public class Main extends Application {
                     estado = br.readLine();
                     tipo = br.readLine();
                     tempJ = new Jogador(nome, data, Float.parseFloat(tempo));
-                    jogos.add(new Jogo(tempJ, Integer.parseInt(jogadas), Boolean.parseBoolean(estado),tipo));
+                    jogos.add(new Jogo(tempJ, Integer.parseInt(jogadas), Boolean.parseBoolean(estado), tipo));
 
                     ct++;
                 }
@@ -361,8 +363,7 @@ public class Main extends Application {
             } catch (Exception e) {
             }
         }
-        for(Jogo j:jogos)
-        {
+        for (Jogo j : jogos) {
             System.out.println(j.getJogador().getNome() + " " + j.getJogador().getData() + " " + j.getJogador().getTempo() + " " + j.getJogada() + " " + j.getcompleto());
         }
     }
