@@ -5,6 +5,7 @@
  */
 package default_package;
 
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,6 +30,10 @@ public class Celula extends Button{
      public Celula()
      {
         new Button();
+     }
+     public Celula(String text, Image graphic)
+     {
+         setGraphic(new ImageView(graphic));
      }
    
     public int getPos(){return pos;}
@@ -56,7 +61,7 @@ public class Celula extends Button{
         setText(" ");
     } 
 
-    void setGraphic(ImageView image) {
+    void setGraphic(Image image) {
         setGraphic(image);
      //   throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
