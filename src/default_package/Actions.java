@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
@@ -114,6 +115,19 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
     
          
 	}
+        
+        public static void BuildTable(){
+            
+           //default_package.Main.table
+           // String[][] staffArray = new String[default_package.Main.jogos.size()+1][6];
+           ArrayList<String> temp = new ArrayList<>();
+                   
+           for(int i=0;i<default_package.Main.jogos.size();i++){
+               
+           }
+           
+        }
+        
         public static void close(Event event)
         {
              Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -126,7 +140,6 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
                 if (result.get() == ButtonType.OK && default_package.Main.playing) {
                    default_package.Main.tempofim=(System.currentTimeMillis() - default_package.Main.tempo) /1000; 
                    default_package.Main.tmpJogador.setTempo(default_package.Main.tempofim);
-                    
                    default_package.Main.jogos.add(new Jogo(default_package.Main.tmpJogador, default_package.Main.numjogadas, false,default_package.Main.tipo));
                    default_package.Main.WriteFile(default_package.Main.jogos);
                     

@@ -35,6 +35,10 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import static javafx.application.Application.launch;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -47,6 +51,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -59,6 +64,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import jdk.nashorn.internal.objects.NativeDebug;
@@ -78,13 +84,15 @@ public class Main extends Application {
     static GridPane gPane = new GridPane();
     static Button[] array1 = new Button[16];
     static Celula[] arraycelula = new Celula[16];
+    
+       static Tab tabMelh = new Tab("Jogos");
     static long tempo = 0;
     static long tempofim = 0;
     static String tipo = "";
     static boolean playing = false;
     static boolean neverplaying = true;
     static boolean playerwon = false;
-    static TableView table = new TableView();
+    public static TableView<String[]> table = new TableView();
     static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     static Date date = new Date();
     static Image img = new Image("/img/puzzle.png", true);
@@ -118,8 +126,7 @@ public class Main extends Application {
         Tab tabAlf = new Tab("Alfabeto");
         Tab tabRom = new Tab("Romanos");
         Tab tabImg = new Tab("Imagem");
-        Tab tabSol = new Tab("Imagem");
-        Tab tabMelh = new Tab("Jogos");
+        Tab tabSol = new Tab("Solução");
         tabNum.setClosable(false);
         tabSol.setClosable(false);
         tabAlf.setClosable(false);
@@ -128,23 +135,9 @@ public class Main extends Application {
         tabMelh.setClosable(false);
 
         root.setTop(mnbar);
-        final Label label = new Label("Jogos");
-        TableColumn tcUser = new TableColumn("Jogador");
-        TableColumn tcScore = new TableColumn("Pontuação");
-        TableColumn tcMoves = new TableColumn("Jogadas");
-        TableColumn tcMode = new TableColumn("Modo de Jogo");
-        TableColumn tcTime = new TableColumn("Duração");
-        TableColumn tcDate = new TableColumn("Data");
-        tcMode.setMinWidth(110);
-        tcUser.setMinWidth(110);
-        tcDate.setMinWidth(110);
-        table.getColumns().addAll(tcUser, tcScore, tcMoves, tcMode, tcTime, tcDate);
 
-        final VBox vbox = new VBox();
-        vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(label, table);
-        tabMelh.setContent(vbox);
+  
+        
 
         mniSair.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -235,10 +228,12 @@ public class Main extends Application {
             }
         });
         ReadFile();
+        BuildTable();
 
         gPane.setAlignment(Pos.TOP_LEFT);
 
     }
+
 
     public void AddButtons(String[] array) {
         ArrayList<String> arr = new ArrayList<String>(Arrays.asList(array));
@@ -468,6 +463,7 @@ public class Main extends Application {
                     estado = br.readLine();
                     tipo = br.readLine();
                     tempJ = new Jogador(nome, data, Float.parseFloat(tempo));
+                    
                     jogos.add(new Jogo(tempJ, Integer.parseInt(jogadas), Boolean.parseBoolean(estado), tipo));
 
                     ct++;
@@ -481,7 +477,41 @@ public class Main extends Application {
         for (Jogo j : jogos) {
             System.out.println(j.getJogador().getNome() + " " + j.getJogador().getData() + " " + j.getJogador().getTempo() + " " + j.getJogada() + " " + j.getcompleto());
         }
+        
     }
+    public static void BuildTable(){
+            
+           
+           String[][] contAr = new String[jogos.size()+1][6];
+           ArrayList<String> temp = new ArrayList<>();
+           String[] x1 = {"Nome","Jogadas","Modo de Jogo","Duração","Data"};
+           contAr[0] = x1;
+           //contAr[0] = x;
+           
+           for(int i=0;i<default_package.Main.jogos.size();i++){
+              String[] x = {jogos.get(i).getJogador().getNome(),Integer.toString(jogos.get(i).getJogada()),jogos.get(i).getTipo(),Float.toString(jogos.get(i).getJogador().getTempo()),jogos.get(i).getJogador().getData()};
+              contAr[i+1] = x;
+           }
+                   ObservableList<String[]> data = FXCollections.observableArrayList();
+        data.addAll(Arrays.asList(contAr));
+        data.remove(0);//remove titles from data
+        for (int i = 0; i < contAr[0].length; i++) {
+            TableColumn tc = new TableColumn(contAr[0][i]);
+            final int colNo = i;
+            tc.setCellValueFactory(new Callback<CellDataFeatures<String[], String>, ObservableValue<String>>() {
+                @Override
+                public ObservableValue<String> call(CellDataFeatures<String[], String> p) {
+                    return new SimpleStringProperty((p.getValue()[colNo]));
+                }
+            });
+            tc.setPrefWidth(90);
+           table.getColumns().add(tc);
+        }
+        table.setItems(data);
+        tabMelh.setContent(table);
+           
+           
+        }
 
     public static void WriteFile(ArrayList<Jogo> j) {
 

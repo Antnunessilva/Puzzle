@@ -1,6 +1,60 @@
-fdsdf
-2016/09/25 18:53:43
-0.0
-1
+f
+2016/09/26 18:10:07
+12.0
+0
+false
+Numerico
+f
+2016/09/26 18:10:07
+12.0
+0
+false
+Numerico
+f
+2016/09/26 18:10:07
+12.0
+0
+false
+Numerico
+f
+2016/09/26 18:10:07
+12.0
+0
+false
+Numerico
+f
+2016/09/26 18:10:07
+12.0
+0
+false
+Numerico
+Mario
+2016/09/26 18:13:08
+31.0
+3
+true
+Imagem
+Mario
+2016/09/26 18:13:08
+31.0
+9
+true
+Imagem
+Mario
+2016/09/26 18:13:08
+31.0
+15
+true
+Imagem
+Mario
+2016/09/26 18:13:08
+31.0
+19
+true
+Imagem
+Mario
+2016/09/26 18:13:08
+31.0
+21
 true
 Imagem
