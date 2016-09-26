@@ -84,8 +84,7 @@ public class Main extends Application {
     static GridPane gPane = new GridPane();
     static Button[] array1 = new Button[16];
     static Celula[] arraycelula = new Celula[16];
-    
-       static Tab tabMelh = new Tab("Jogos");
+    static Tab tabMelh = new Tab("Jogos");
     static long tempo = 0;
     static long tempofim = 0;
     static String tipo = "";
@@ -95,11 +94,8 @@ public class Main extends Application {
     public static TableView<String[]> table = new TableView();
     static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     static Date date = new Date();
-    static Image img = new Image("/img/puzzle.png", true);
-    static ImageView imgview = new ImageView(img);
-
     static TabPane tabPane = new TabPane();
-
+    static EventHandler eve = null;
     static String[] ints = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", " "};
     static String[] chars = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", " "};
     static String[] roms = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", " "};
@@ -109,7 +105,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
 
         primaryStage.setTitle("Puzzle");
-
         MenuBar mnbar = new MenuBar();
         Menu menuFile = new Menu("File");
         Menu menuHelp = new Menu("Info");
@@ -135,9 +130,6 @@ public class Main extends Application {
         tabMelh.setClosable(false);
 
         root.setTop(mnbar);
-
-  
-        
 
         mniSair.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -191,7 +183,6 @@ public class Main extends Application {
                             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
-
                     AddButtons(imgs);//enviar param com tipo
                     tabPane = new TabPane();
                     tabImg.setContent(gPane);
@@ -201,11 +192,8 @@ public class Main extends Application {
                     gPane.getStylesheets().add("css/style.css");
                     root.setCenter(tabPane);
                     root.requestLayout();
-
                     break;
-
                 }
-
             }
         });
 
@@ -222,14 +210,11 @@ public class Main extends Application {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-
                 default_package.Actions.close(event);
-
             }
         });
         ReadFile();
         BuildTable();
-
         gPane.setAlignment(Pos.TOP_LEFT);
 
     }
@@ -238,7 +223,7 @@ public class Main extends Application {
     public void AddButtons(String[] array) {
         ArrayList<String> arr = new ArrayList<String>(Arrays.asList(array));
 
-        //Collections.shuffle(arr); //comentar sempre que quisermos testar
+    //    Collections.shuffle(arr); //descomentar sempre que quisermos testar
         int j = 1, y = 1;
         for (int i = 0; i < 16; i++) {
 
@@ -273,14 +258,15 @@ public class Main extends Application {
             if ((i + 1) % 4 == 0) {
                 j++;
             }
-            if (i == 15) {
+            
+            if (arraycelula[i].getText().equals(" ")) {
                 arraycelula[i].setHole(true);
                 arraycelula[i].setNum(" ");
             }
         }
 
         for (int i = 0; i < 16; i++) {
-            arraycelula[i].setOnAction(new EventHandler<ActionEvent>() {
+            arraycelula[i].setOnAction(eve = new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
 
@@ -422,7 +408,6 @@ public class Main extends Application {
                             arraycelula[id].setHole(true);
                             arraycelula[id].setMov(false);
                             default_package.Actions.Validate();
-
                         }
                     } catch (IndexOutOfBoundsException erro) {
 

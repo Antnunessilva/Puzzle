@@ -28,6 +28,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -101,22 +102,10 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
 
     }
 
-    public static void BuildTable() {
-
-        //default_package.Main.table
-        // String[][] staffArray = new String[default_package.Main.jogos.size()+1][6];
-        ArrayList<String> temp = new ArrayList<>();
-
-        for (int i = 0; i < default_package.Main.jogos.size(); i++) {
-
-        }
-
-    }
-
     public static void close(Event event) {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Deseja sair?");
-        alert.setHeaderText("Pressione ok para sair!");
+        alert.setHeaderText("Pressione OK para sair!");
         alert.setContentText("Cancel para voltar!");
 
         Optional<ButtonType> result = alert.showAndWait();
@@ -145,8 +134,7 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
     public static void cutImages(Stage star) throws FileNotFoundException, IOException {
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
-
+        fileChooser.setTitle("Escolha o seu ficheiro!");
         File file = fileChooser.showOpenDialog(star);
         FileInputStream Fis = new FileInputStream(file);
         BufferedImage Image = ImageIO.read(Fis);
@@ -171,7 +159,7 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         }
     }
 
-    public static void Validate() //FALTA quando se ganha na parte imagens - animação de hover na ultima
+    public static void Validate() 
     {
         Alert a = new Alert(AlertType.INFORMATION);
         String[] str = new String[16];
@@ -222,6 +210,10 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
     }
 
     public static void Anim() {
+         for (Celula c : default_package.Main.arraycelula) //doesnt work
+        {
+            c.setDisable(true);
+        }
         ImageView ultimapeca = new ImageView();
         ultimapeca.setImage(new Image("file:img15.png"));
         ultimapeca.scaleXProperty();
@@ -260,10 +252,7 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
                 Duration.millis(3200),
                 ae -> changelast()));
         timeline.play();
-        for (Celula c : default_package.Main.arraycelula) //doesnt work
-        {
-            c.setOnMousePressed(null);
-        }
+       
     }
     public static void changelast() {
         arraycelula[15].setStyle("-fx-background-image: url("
