@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 import javafx.animation.FadeTransition;
@@ -28,7 +27,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
-import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -55,6 +53,10 @@ import javax.imageio.ImageIO;
  * @author main4db
  */
 public class Actions { //conversão de tempo no final - na salvaguarda de dados
+
+    static int lastid = 0;
+    static int lastid1 = 0;
+    static File file = null;
 
     public static void ExecuteNewGame() {
 
@@ -95,6 +97,10 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         Optional<Pair<String, String>> result = dialog.showAndWait();
         default_package.Main.numjogadas = 0;
         Main.tmpJogador = new Jogador();
+        default_package.Main.tempo = 0;
+        if (default_package.Main.tipo != "Imagem") {
+            default_package.Main.tempo = System.currentTimeMillis(); //first time stamp
+        }
         default_package.Main.tempo = System.currentTimeMillis(); //first time stamp
         default_package.Main.playing = true;
         default_package.Main.neverplaying = false;
@@ -109,24 +115,36 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         alert.setContentText("Cancel para voltar!");
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK && default_package.Main.playing) {
+        if (result.get() == ButtonType.OK && default_package.Main.playing) {// leave while playing, so far so good
             default_package.Main.tempofim = (System.currentTimeMillis() - default_package.Main.tempo) / 1000;
             default_package.Main.tmpJogador.setTempo(default_package.Main.tempofim);
 
             default_package.Main.jogos.add(new Jogo(default_package.Main.tmpJogador, default_package.Main.numjogadas, false, default_package.Main.tipo));
             default_package.Main.WriteFile(default_package.Main.jogos);
-
+            erase();
             Platform.exit();
         } else if (result.get() == ButtonType.OK && !default_package.Main.playing) {
             if (Main.neverplaying) {
+                erase();
                 Platform.exit();
             } else {
                 default_package.Main.WriteFile(default_package.Main.jogos);
+                erase();
                 Platform.exit();
             }
 
         } else {
             event.consume();
+
+        }
+    }
+
+    public static void erase() {
+        for (int i = 0; i < 16; i++) {
+
+           
+            File f1 = new File("img" + i + ".png");
+            f1.delete();
 
         }
     }
@@ -138,6 +156,13 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         File file = fileChooser.showOpenDialog(star);
         FileInputStream Fis = new FileInputStream(file);
         BufferedImage Image = ImageIO.read(Fis);
+        default_package.Main.imagepick = true;
+
+        Image img = new Image(file.toURI().toString());
+        ImageView im = new ImageView(img);
+        im.fitWidthProperty().bind(root.widthProperty());
+        im.fitHeightProperty().bind(root.heightProperty());
+        default_package.Main.tabSol.setContent(im);
 
         int linhas = 4;
         int colunas = 4;
@@ -146,6 +171,7 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         int chunkHeight = Image.getHeight() / linhas;
         int count = 0;
         BufferedImage imgs[] = new BufferedImage[bits]; //criação de um array de imagens
+
         for (int x = 0; x < linhas; x++) {
             for (int y = 0; y < colunas; y++) {
                 imgs[count] = new BufferedImage(chunkWidth, chunkHeight, Image.getType()); //nova imagem cortada
@@ -157,10 +183,11 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         for (int i = 0; i < imgs.length; i++) {
             ImageIO.write(imgs[i], "png", new File("img" + i + ".png")); //
         }
+        default_package.Main.tempo = System.currentTimeMillis();
+
     }
 
-    public static void Validate() 
-    {
+    public static void Validate() {
         Alert a = new Alert(AlertType.INFORMATION);
         String[] str = new String[16];
 
@@ -192,11 +219,13 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         }
         if (count == 16) //fim do jogo
         {
+            default_package.Main.tempofim = (System.currentTimeMillis() - default_package.Main.tempo) / 1000;
             default_package.Main.tmpJogador.setTempo(default_package.Main.tempofim);
             a.setTitle("Ganhou!");
-            a.setHeaderText("Completou o puzzle! Parabéns " + default_package.Main.tmpJogador.getNome());
-            a.setContentText("Ganhou o jogo em " + default_package.Main.tmpJogador.getTempo());
+            a.setHeaderText("Completou o puzzle! Parabéns " + default_package.Main.tmpJogador.getNome().toUpperCase());
+            a.setContentText("Ganhou o jogo em " + default_package.Main.TimeConv(default_package.Main.tmpJogador.getTempo()));
             a.show();
+            default_package.Main.gameover = true;
             default_package.Main.tempofim = (System.currentTimeMillis() - default_package.Main.tempo) / 1000;
             default_package.Main.playerwon = true;
             default_package.Main.playing = false;
@@ -204,16 +233,14 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
             if (default_package.Main.tipo.equals("Imagem")) {
                 Anim();
             }
+            btnstop();
         }
         default_package.Main.numjogadas++;
         count = 0;
     }
 
     public static void Anim() {
-         for (Celula c : default_package.Main.arraycelula) //doesnt work
-        {
-            c.setDisable(true);
-        }
+
         ImageView ultimapeca = new ImageView();
         ultimapeca.setImage(new Image("file:img15.png"));
         ultimapeca.scaleXProperty();
@@ -243,7 +270,7 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         sequentialTransition.getChildren().addAll(
                 pathTransition,
                 fadeTransition);
-        sequentialTransition.setCycleCount(1);
+        sequentialTransition.setCycleCount(2);
         sequentialTransition.play();
 
         root.getChildren().add(ultimapeca);
@@ -252,8 +279,12 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
                 Duration.millis(3200),
                 ae -> changelast()));
         timeline.play();
+
+        btnstop();
+
        
     }
+
     public static void changelast() {
         arraycelula[15].setStyle("-fx-background-image: url("
                 + "'file:img15.png'"
@@ -262,4 +293,13 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
                 + " -fx-text-fill:transparent;"
                 + "-fx-fit-to-height: true;");
     }
+
+    public static void btnstop() {
+        for (Celula c : default_package.Main.arraycelula) {
+            c.setOnAction(null);
+
+        }
+
+    }
+
 }

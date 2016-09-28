@@ -1,12 +1,66 @@
+asdasd
+2016/09/28 03:02:52
+6.0
+5
+false
+Imagem
+asdasd
+2016/09/28 03:18:15
+6.0
+3
+false
+Imagem
 asdasdasd
-2016/09/26 19:47:26
-37.0
+2016/09/28 03:18:45
+1.0
+0
+false
+Numerico
+asdasdas
+2016/09/28 03:19:57
+3.0
+0
+false
+Romanos
+dfgdfgdfg
+2016/09/28 03:21:10
+6.0
+0
+false
+Numerico
+asdasdasd
+2016/09/28 03:27:26
+11.0
+0
+false
+Numerico
+adsada
+2016/09/28 03:27:51
+13.0
+12
+false
+Imagem
+asdasdasdasdad
+2016/09/28 03:28:43
+1.0
 1
 true
 Numerico
 asdasdasd
-2016/09/26 19:47:26
-37.0
-7
+2016/09/28 03:28:43
+8.0
+1
 true
 Numerico
+asdasd
+2016/09/28 03:28:43
+8.0
+0
+false
+Alfabeto
+asdasd
+2016/09/28 03:38:27
+1.0
+1
+true
+Imagem

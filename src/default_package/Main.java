@@ -5,8 +5,6 @@
  */
 package default_package;
 
-import java.awt.image.BufferedImage;
-import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,18 +18,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import static javafx.application.Application.launch;
 import javafx.application.Platform;
@@ -39,12 +33,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -53,21 +42,10 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import jdk.nashorn.internal.objects.NativeDebug;
 
 /**
  *
@@ -85,12 +63,14 @@ public class Main extends Application {
     static Button[] array1 = new Button[16];
     static Celula[] arraycelula = new Celula[16];
     static Tab tabMelh = new Tab("Jogos");
+    static Tab tabSol = new Tab("Solução");
     static long tempo = 0;
     static long tempofim = 0;
     static String tipo = "";
     static boolean playing = false;
     static boolean neverplaying = true;
     static boolean playerwon = false;
+    static boolean imagepick = false;
     public static TableView<String[]> table = new TableView();
     static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     static Date date = new Date();
@@ -100,6 +80,8 @@ public class Main extends Application {
     static String[] chars = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", " "};
     static String[] roms = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", " "};
     static String[] imgs = {"img0.png", "img1.png", "img2.png", "img3.png", "img4.png", "img5.png", "img6.png", "img7.png", "img8.png", "img9.png", "img10.png", "img11.png", "img12.png", "img13.png", "img14.png", " "};
+    static int x = 0;
+    static boolean gameover = false, imagegame = false;
 
     @Override
     public void start(Stage primaryStage) {
@@ -121,7 +103,7 @@ public class Main extends Application {
         Tab tabAlf = new Tab("Alfabeto");
         Tab tabRom = new Tab("Romanos");
         Tab tabImg = new Tab("Imagem");
-        Tab tabSol = new Tab("Solução");
+
         tabNum.setClosable(false);
         tabSol.setClosable(false);
         tabAlf.setClosable(false);
@@ -143,18 +125,21 @@ public class Main extends Application {
             public void handle(ActionEvent e) {
 
                 default_package.Actions.ExecuteNewGame();
+                BuildTable();
                 switch (tipo) {
-                    case "Numerico":
+                    case "Numerico": {
                         AddButtons(ints);//enviar param com tipo
                         tabPane = new TabPane();
                         tabNum.setContent(gPane);
+
                         tabPane.getTabs().add(tabNum);
                         tabPane.getTabs().add(tabMelh);
                         gPane.getStylesheets().add("css/style.css");
                         root.setCenter(tabPane);
                         root.requestLayout();
                         break;
-                    case "Alfabeto":
+                    }
+                    case "Alfabeto": {
                         AddButtons(chars);//enviar param com tipo
                         tabPane = new TabPane();
                         tabAlf.setContent(gPane);
@@ -165,7 +150,8 @@ public class Main extends Application {
                         root.requestLayout();
 
                         break;
-                    case "Romanos":
+                    }
+                    case "Romanos": {
                         AddButtons(roms);//enviar param com tipo
                         tabPane = new TabPane();
                         tabRom.setContent(gPane);
@@ -176,14 +162,19 @@ public class Main extends Application {
                         root.requestLayout();
 
                         break;
+                    }
                     case "Imagem": {
-                        try {
-                            default_package.Actions.cutImages(primaryStage);
-                        } catch (IOException ex) {
-                            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                        if (imagepick == false) {
+                            try {
+                                default_package.Actions.cutImages(primaryStage);
+                            } catch (IOException ex) {
+                                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                     }
-                    AddButtons(imgs);//enviar param com tipo
+
+                    AddButtons(imgs);
+
                     tabPane = new TabPane();
                     tabImg.setContent(gPane);
                     tabPane.getTabs().add(tabImg);
@@ -219,19 +210,36 @@ public class Main extends Application {
 
     }
 
+    public static String TimeConv(float t) {
+
+        String time = null;
+        if (t < 3600) {//below h
+
+            if (t < 60) {//only sec
+                time = t + "s";
+            } else {//min, sec
+                time = "" + ((t / 60) % 60) + "m" + ((t % 3600) % 60) + "s";
+            }
+        } else {//above h
+            time = "" + ((t / 60) % 60) + "h" + ((t / 60) % 60) + "m" + ((t % 3600) % 60) + "s";
+        }
+
+        return time;
+    }
 
     public void AddButtons(String[] array) {
         ArrayList<String> arr = new ArrayList<String>(Arrays.asList(array));
 
-    //    Collections.shuffle(arr); //descomentar sempre que quisermos testar
+        //Collections.shuffle(arr); //introduz aleatoriadade
         int j = 1, y = 1;
+
         for (int i = 0; i < 16; i++) {
 
             int numButton = i;
-            arraycelula[i] = new Celula();
+
             if (tipo.equals("Imagem")) {
-                arraycelula[i].setStyle("-fx-background-image: url("
-                        + "'file:" + arr.get(i) + "'"
+                arraycelula[i] = new Celula();
+                arraycelula[i].setStyle("-fx-background-image: url(file:" + arr.get(i)
                         + "); "
                         + "-fx-background-size: cover, auto;"
                         + " -fx-text-fill:transparent;"
@@ -258,7 +266,6 @@ public class Main extends Application {
             if ((i + 1) % 4 == 0) {
                 j++;
             }
-            
             if (arraycelula[i].getText().equals(" ")) {
                 arraycelula[i].setHole(true);
                 arraycelula[i].setNum(" ");
@@ -283,6 +290,7 @@ public class Main extends Application {
                                     primeiro = arraycelula[id + 1].getNum();
                                     arraycelula[id + 1].setNum(click);
                                     if (default_package.Main.tipo.equals("Imagem")) {
+
                                         arraycelula[id + 1].setStyle("-fx-background-image: url("
                                                 + "'file:" + click + "'"
                                                 + "); "
@@ -294,7 +302,7 @@ public class Main extends Application {
                                     arraycelula[id + 1].setMov(true);
                                     arraycelula[id].setNum(" ");
                                     if (default_package.Main.tipo.equals("Imagem")) {
-                                        arraycelula[id].setStyle(null);
+
                                         arraycelula[id].setStyle("-fx-background-image: url("
                                                 + "'file:" + primeiro + "'"
                                                 + "); "
@@ -319,6 +327,7 @@ public class Main extends Application {
                                     primeiro = arraycelula[id - 1].getNum();
                                     arraycelula[id - 1].setNum(click);
                                     if (default_package.Main.tipo.equals("Imagem")) {
+
                                         arraycelula[id - 1].setStyle("-fx-background-image: url("
                                                 + "'file:" + click + "'"
                                                 + "); "
@@ -330,7 +339,7 @@ public class Main extends Application {
                                     arraycelula[id - 1].setMov(true);
                                     arraycelula[id].setNum(" ");
                                     if (default_package.Main.tipo.equals("Imagem")) {
-                                        arraycelula[id].setStyle(null);
+
                                         arraycelula[id].setStyle("-fx-background-image: url("
                                                 + "'file:" + primeiro + "'"
                                                 + "); "
@@ -352,6 +361,7 @@ public class Main extends Application {
                             primeiro = arraycelula[id + 4].getNum();
                             arraycelula[id + 4].setNum(click);
                             if (default_package.Main.tipo.equals("Imagem")) {
+
                                 arraycelula[id + 4].setStyle("-fx-background-image: url("
                                         + "'file:" + click + "'"
                                         + "); "
@@ -363,7 +373,7 @@ public class Main extends Application {
                             arraycelula[id + 4].setMov(true);
                             arraycelula[id].setNum(" ");
                             if (default_package.Main.tipo.equals("Imagem")) {
-                                arraycelula[id].setStyle(null);
+
                                 arraycelula[id].setStyle("-fx-background-image: url("
                                         + "'file:" + primeiro + "'"
                                         + "); "
@@ -385,18 +395,20 @@ public class Main extends Application {
                             primeiro = arraycelula[id - 4].getNum();
                             arraycelula[id - 4].setNum(click);
                             if (default_package.Main.tipo.equals("Imagem")) {
+
                                 arraycelula[id - 4].setStyle("-fx-background-image: url("
                                         + "'file:" + click + "'"
                                         + "); "
                                         + "-fx-background-size: cover, auto;"
                                         + " -fx-text-fill:transparent;"
                                         + "-fx-fit-to-height: true;");
+
                             }
                             arraycelula[id - 4].setHole(false);
                             arraycelula[id - 4].setMov(true);
                             arraycelula[id].setNum(" ");
                             if (default_package.Main.tipo.equals("Imagem")) {
-                                arraycelula[id].setStyle(null);
+
                                 arraycelula[id].setStyle("-fx-background-image: url("
                                         + "'file:" + primeiro + "'"
                                         + "); "
@@ -416,6 +428,7 @@ public class Main extends Application {
                 }
             });
         }
+
     }
 
     public static int LineCounter(String fname) {
@@ -434,13 +447,13 @@ public class Main extends Application {
         File fi = new File("logs.txt");
         int lnct = LineCounter("logs.txt");
         String nome, data, tempo, jogadas, estado, tipo;
-
-        if (fi.exists() && lnct != 0 && lnct % 5 == 0) {
+        jogos = new ArrayList();
+        if (fi.exists() && lnct != 0 && lnct % 6 == 0) {
             Jogador tempJ;
             try {
                 FileInputStream fs = new FileInputStream("logs.txt");
                 BufferedReader br = new BufferedReader(new InputStreamReader(fs));
-                while (ct < lnct / 5) {
+                while (ct < lnct / 6) {
                     nome = br.readLine();
                     data = br.readLine();
                     tempo = br.readLine();
@@ -448,7 +461,7 @@ public class Main extends Application {
                     estado = br.readLine();
                     tipo = br.readLine();
                     tempJ = new Jogador(nome, data, Float.parseFloat(tempo));
-                    
+
                     jogos.add(new Jogo(tempJ, Integer.parseInt(jogadas), Boolean.parseBoolean(estado), tipo));
 
                     ct++;
@@ -459,29 +472,42 @@ public class Main extends Application {
             } catch (Exception e) {
             }
         }
-        for (Jogo j : jogos) {
-            System.out.println(j.getJogador().getNome() + " " + j.getJogador().getData() + " " + j.getJogador().getTempo() + " " + j.getJogada() + " " + j.getcompleto());
-        }
-        
+
     }
-    public static void BuildTable(){
-            
-           
-           String[][] contAr = new String[jogos.size()+1][6];
-           ArrayList<String> temp = new ArrayList<>();
-           String[] x1 = {"Nome","Jogadas","Modo de Jogo","Duração","Data"};
-           contAr[0] = x1;
-           //contAr[0] = x;
-           
-           for(int i=0;i<default_package.Main.jogos.size();i++){
-              String[] x = {jogos.get(i).getJogador().getNome(),Integer.toString(jogos.get(i).getJogada()),jogos.get(i).getTipo(),Float.toString(jogos.get(i).getJogador().getTempo()),jogos.get(i).getJogador().getData()};
-              contAr[i+1] = x;
-           }
-                   ObservableList<String[]> data = FXCollections.observableArrayList();
+
+    public static void BuildTable() {
+        //Changed
+        table = new TableView();
+        tabMelh = new Tab("Jogos");
+        tabMelh.setClosable(false);
+        table.getStylesheets().add("css/style.css");
+        String[][] contAr = new String[jogos.size() + 1][6];
+        ArrayList<String> temp = new ArrayList<>();
+        String[] x1 = {"Nome", "Jogadas", "Modo de Jogo", "Duração", "Data", "Estado"};
+        contAr[0] = x1;
+        //contAr[0] = x;
+
+        for (int i = 0; i < default_package.Main.jogos.size(); i++) {
+            String st = null;
+            if (jogos.get(i).getcompleto()) {
+                st = "Completo";
+            } else {
+                st = "Incompleto";
+            }
+            String tmpT = TimeConv(jogos.get(i).getJogador().getTempo());
+            String[] x = {jogos.get(i).getJogador().getNome(), Integer.toString(jogos.get(i).getJogada()), jogos.get(i).getTipo(), tmpT, jogos.get(i).getJogador().getData(), st};
+            contAr[i + 1] = x;
+        }
+        ObservableList<String[]> data = FXCollections.observableArrayList();
         data.addAll(Arrays.asList(contAr));
         data.remove(0);//remove titles from data
         for (int i = 0; i < contAr[0].length; i++) {
             TableColumn tc = new TableColumn(contAr[0][i]);
+            tc.getStyleClass().add("table-column");
+            if (i == 4) {
+                tc.setMinWidth(130);
+            }
+
             final int colNo = i;
             tc.setCellValueFactory(new Callback<CellDataFeatures<String[], String>, ObservableValue<String>>() {
                 @Override
@@ -490,13 +516,15 @@ public class Main extends Application {
                 }
             });
             tc.setPrefWidth(90);
-           table.getColumns().add(tc);
+            table.getColumns().add(tc);
         }
         table.setItems(data);
         tabMelh.setContent(table);
-           
-           
-        }
+
+        //Changed
+        tabPane.requestLayout();
+
+    }
 
     public static void WriteFile(ArrayList<Jogo> j) {
 
