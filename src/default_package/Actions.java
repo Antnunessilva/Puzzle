@@ -5,6 +5,7 @@
  */
 package default_package;
 
+import static default_package.Main.BuildTable;
 import static default_package.Main.arraycelula;
 import static default_package.Main.date;
 import static default_package.Main.dateFormat;
@@ -18,7 +19,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
-import javafx.animation.FadeTransition;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.KeyFrame;
 import javafx.animation.PathTransition;
 import javafx.animation.ScaleTransition;
@@ -36,6 +38,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -46,26 +49,27 @@ import javafx.scene.shape.Path;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.util.Pair;
 import javax.imageio.ImageIO;
 
 /**
  *
  * @author main4db
  */
-public class Actions { //conversão de tempo no final - na salvaguarda de dados
+public class Actions {
 
     static int lastid = 0;
     static int lastid1 = 0;
     static File file = null;
+    static boolean entrou = false;
 
-    public static void ExecuteNewGame() {
+    public static void ExecuteNewGame(Stage primaryStage) { //novo jogo
 
-        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Novo Jopo");
         dialog.setHeaderText("Escolha o tipo de Jogo.");
         ButtonType jogar = new ButtonType("Jogar", ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(jogar, ButtonType.CANCEL);
+        ButtonType cancelar = new ButtonType("Cancelar", ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(jogar, cancelar);
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -86,37 +90,98 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         grid.add(new Label("Tipo de Jogo:"), 0, 1);
         grid.add(comboTipo, 1, 1);
         dialog.getDialogPane().setContent(grid);
+
         Platform.runLater(() -> username.requestFocus());
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == jogar) {
-                default_package.Main.currentPlayer = username.getText();
-                default_package.Main.tipo = comboTipo.getValue().toString();
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.get() == jogar) {
+            entrou = true;
+            default_package.Main.currentPlayer = username.getText();
+            default_package.Main.tipo = comboTipo.getValue().toString();
+            default_package.Main.numjogadas = 0;
+            Main.tmpJogador = new Jogador();
+            default_package.Main.tempo = 0;
+            if (default_package.Main.tipo != "Imagem") {
+                default_package.Main.tempo = System.currentTimeMillis(); //first time stamp
             }
-            return null;
-        });
-
-        Optional<Pair<String, String>> result = dialog.showAndWait();
-        default_package.Main.numjogadas = 0;
-        Main.tmpJogador = new Jogador();
-        default_package.Main.tempo = 0;
-        if (default_package.Main.tipo != "Imagem") {
             default_package.Main.tempo = System.currentTimeMillis(); //first time stamp
-        }
-        default_package.Main.tempo = System.currentTimeMillis(); //first time stamp
-        default_package.Main.playing = true;
-        default_package.Main.neverplaying = false;
-        tmpJogador = new Jogador(default_package.Main.currentPlayer, dateFormat.format(date).toString(), 0);
+            default_package.Main.playing = true;
+            default_package.Main.neverplaying = false;
+            tmpJogador = new Jogador(default_package.Main.currentPlayer, dateFormat.format(date).toString(), 0);
+            BuildTable();
+            switch (default_package.Main.tipo) { //teste multiplo de tipos de jogo
+                case "Numerico": {
+                    default_package.Main.AddButtons(default_package.Main.ints);//enviar param com tipo
+                    default_package.Main.tabPane = new TabPane();
+                    default_package.Main.tabNum.setContent(default_package.Main.gPane);
 
+                    default_package.Main.tabPane.getTabs().add(default_package.Main.tabNum);
+                    default_package.Main.tabPane.getTabs().add(default_package.Main.tabMelh);
+                    default_package.Main.gPane.getStylesheets().add("css/style.css");
+                    root.setCenter(default_package.Main.tabPane);
+                    root.requestLayout();
+                    break;
+                }
+                case "Alfabeto": {
+                    default_package.Main.AddButtons(default_package.Main.chars);//enviar param com tipo
+                    default_package.Main.tabPane = new TabPane();
+                    default_package.Main.tabAlf.setContent(default_package.Main.gPane);
+                    default_package.Main.tabPane.getTabs().add(default_package.Main.tabAlf);
+                    default_package.Main.tabPane.getTabs().add(default_package.Main.tabMelh);
+                    default_package.Main.gPane.getStylesheets().add("css/style.css");
+                    root.setCenter(default_package.Main.tabPane);
+                    root.requestLayout();
+
+                    break;
+                }
+                case "Romanos": {
+                    default_package.Main.AddButtons(default_package.Main.roms);//enviar param com tipo
+                    default_package.Main.tabPane = new TabPane();
+                    default_package.Main.tabRom.setContent(default_package.Main.gPane);
+                    default_package.Main.tabPane.getTabs().add(default_package.Main.tabRom);
+                    default_package.Main.tabPane.getTabs().add(default_package.Main.tabMelh);
+                    default_package.Main.gPane.getStylesheets().add("css/style.css");
+                    root.setCenter(default_package.Main.tabPane);
+                    root.requestLayout();
+
+                    break;
+                }
+                case "Imagem": {
+                    if (default_package.Main.imagepick == false) {
+                        try {
+                            default_package.Actions.cutImages(primaryStage);
+                        } catch (IOException ex) {
+                            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    default_package.Main.AddButtons(default_package.Main.imgs);
+
+                    default_package.Main.tabPane = new TabPane();
+                    default_package.Main.tabImg.setContent(default_package.Main.gPane);
+                    default_package.Main.tabPane.getTabs().add(default_package.Main.tabImg);
+                    default_package.Main.tabPane.getTabs().add(default_package.Main.tabSol);
+                    default_package.Main.tabPane.getTabs().add(default_package.Main.tabMelh);
+                    default_package.Main.gPane.getStylesheets().add("css/style.css");
+                    root.setCenter(default_package.Main.tabPane);
+                    root.requestLayout();
+                    break;
+                }
+            }
+        } else if (result.get() == cancelar) {
+            if (entrou == true) {
+                btnstop();
+            }
+        }
     }
 
-    public static void close(Event event) {
+    public static void close(Event event) { //definições customizadas de fechar o programa
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Deseja sair?");
         alert.setHeaderText("Pressione OK para sair!");
         alert.setContentText("Cancel para voltar!");
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK && default_package.Main.playing) {// leave while playing, so far so good
+        if (result.get() == ButtonType.OK && default_package.Main.playing) {//
             default_package.Main.tempofim = (System.currentTimeMillis() - default_package.Main.tempo) / 1000;
             default_package.Main.tmpJogador.setTempo(default_package.Main.tempofim);
 
@@ -139,14 +204,14 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         }
     }
 
-    public static void erase() {
+    public static void erase() { //apagar os ficheiros de imagem
         for (int i = 0; i < 16; i++) {
             File f1 = new File("img" + i + ".png");
             f1.delete();
         }
     }
 
-    public static void cutImages(Stage star) throws FileNotFoundException, IOException {
+    public static void cutImages(Stage star) throws FileNotFoundException, IOException { //após a escolha da imagem, aqui são cortadas para serem inseridas no puzzle
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Escolha o seu ficheiro!");
@@ -223,7 +288,7 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
             a.show();
             default_package.Main.gameover = true;
             default_package.Main.tempofim = (System.currentTimeMillis() - default_package.Main.tempo) / 1000;
-            default_package.Main.playerwon = true;
+
             default_package.Main.playing = false;
             default_package.Main.jogos.add(new Jogo(default_package.Main.tmpJogador, default_package.Main.numjogadas, true, default_package.Main.tipo));
             if (default_package.Main.tipo.equals("Imagem")) {
@@ -276,7 +341,7 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         btnstop();
     }
 
-    public static void changelast() {
+    public static void changelast() { //mudança da ultima peça
         arraycelula[15].setStyle("-fx-background-image: url("
                 + "'file:img15.png'"
                 + "); "
@@ -285,7 +350,7 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
                 + "-fx-fit-to-height: true;");
     }
 
-    public static void btnstop() {
+    public static void btnstop() { //retirar metodos de acção dos butões
         for (Celula c : default_package.Main.arraycelula) {
             c.setOnAction(null);
         }

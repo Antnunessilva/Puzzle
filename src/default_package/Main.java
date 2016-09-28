@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
@@ -20,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -70,7 +67,7 @@ public class Main extends Application {
     static String tipo = "";
     static boolean playing = false;
     static boolean neverplaying = true;
-    static boolean playerwon = false;
+
     static boolean imagepick = false;
     public static TableView<String[]> table = new TableView();
     static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -83,6 +80,10 @@ public class Main extends Application {
     static String[] imgs = {"img0.png", "img1.png", "img2.png", "img3.png", "img4.png", "img5.png", "img6.png", "img7.png", "img8.png", "img9.png", "img10.png", "img11.png", "img12.png", "img13.png", "img14.png", " "};
     static int x = 0;
     static boolean gameover = false, imagegame = false;
+    static Tab tabNum = new Tab("Numerico");
+    static Tab tabAlf = new Tab("Alfabeto");
+    static Tab tabRom = new Tab("Romanos");
+    static Tab tabImg = new Tab("Imagem");
 
     @Override
     public void start(Stage primaryStage) {
@@ -90,20 +91,13 @@ public class Main extends Application {
         primaryStage.setTitle("Puzzle");
         MenuBar mnbar = new MenuBar();
         Menu menuFile = new Menu("File");
-        Menu menuHelp = new Menu("Info");
-        MenuItem mniAutor = new MenuItem("Autores");
-        MenuItem mniLing = new MenuItem("Linguagem");
+
         MenuItem mniJogo = new MenuItem("Novo Jogo");
         MenuItem mniSair = new MenuItem("Sair");
 
-        menuHelp.getItems().addAll(mniAutor, mniLing);
         menuFile.getItems().addAll(mniJogo, mniSair);
-        mnbar.getMenus().addAll(menuFile, menuHelp);
+        mnbar.getMenus().addAll(menuFile);
         //
-        Tab tabNum = new Tab("Numerico");
-        Tab tabAlf = new Tab("Alfabeto");
-        Tab tabRom = new Tab("Romanos");
-        Tab tabImg = new Tab("Imagem");
 
         tabNum.setClosable(false);
         tabSol.setClosable(false);
@@ -125,67 +119,8 @@ public class Main extends Application {
             @Override
             public void handle(ActionEvent e) {
 
-                default_package.Actions.ExecuteNewGame();
-                BuildTable();
-                switch (tipo) {
-                    case "Numerico": {
-                        AddButtons(ints);//enviar param com tipo
-                        tabPane = new TabPane();
-                        tabNum.setContent(gPane);
+                default_package.Actions.ExecuteNewGame(primaryStage);
 
-                        tabPane.getTabs().add(tabNum);
-                        tabPane.getTabs().add(tabMelh);
-                        gPane.getStylesheets().add("css/style.css");
-                        root.setCenter(tabPane);
-                        root.requestLayout();
-                        break;
-                    }
-                    case "Alfabeto": {
-                        AddButtons(chars);//enviar param com tipo
-                        tabPane = new TabPane();
-                        tabAlf.setContent(gPane);
-                        tabPane.getTabs().add(tabAlf);
-                        tabPane.getTabs().add(tabMelh);
-                        gPane.getStylesheets().add("css/style.css");
-                        root.setCenter(tabPane);
-                        root.requestLayout();
-
-                        break;
-                    }
-                    case "Romanos": {
-                        AddButtons(roms);//enviar param com tipo
-                        tabPane = new TabPane();
-                        tabRom.setContent(gPane);
-                        tabPane.getTabs().add(tabRom);
-                        tabPane.getTabs().add(tabMelh);
-                        gPane.getStylesheets().add("css/style.css");
-                        root.setCenter(tabPane);
-                        root.requestLayout();
-
-                        break;
-                    }
-                    case "Imagem": {
-                        if (imagepick == false) {
-                            try {
-                                default_package.Actions.cutImages(primaryStage);
-                            } catch (IOException ex) {
-                                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                    }
-
-                    AddButtons(imgs);
-
-                    tabPane = new TabPane();
-                    tabImg.setContent(gPane);
-                    tabPane.getTabs().add(tabImg);
-                    tabPane.getTabs().add(tabSol);
-                    tabPane.getTabs().add(tabMelh);
-                    gPane.getStylesheets().add("css/style.css");
-                    root.setCenter(tabPane);
-                    root.requestLayout();
-                    break;
-                }
             }
         });
 
@@ -211,7 +146,7 @@ public class Main extends Application {
 
     }
 
-    public static String TimeConv(float t) {
+    public static String TimeConv(float t) { //conversão de tempo
 
         String time = null;
         if (t < 3600) {//below h
@@ -228,10 +163,10 @@ public class Main extends Application {
         return time;
     }
 
-    public void AddButtons(String[] array) {
+    public static void AddButtons(String[] array) { //adição de butões
         ArrayList<String> arr = new ArrayList<String>(Arrays.asList(array));
 
-        // Collections.shuffle(arr); //introduz aleatoriadade
+        Collections.shuffle(arr); //introduz aleatoriadade
         int j = 1, y = 1;
 
         for (int i = 0; i < 16; i++) {
@@ -378,7 +313,7 @@ public class Main extends Application {
 
     }
 
-    public static void changeBtn(int ids, String str) {
+    public static void changeBtn(int ids, String str) { //metodo que gere as alterações das imagens nos butões
 
         arraycelula[ids].setStyle("-fx-background-image: url("
                 + "'file:" + str + "'"
@@ -389,7 +324,7 @@ public class Main extends Application {
 
     }
 
-    public static int LineCounter(String fname) {
+    public static int LineCounter(String fname) { //conta as linhas do ficheiro
         try {
             LineNumberReader lnr = new LineNumberReader(new FileReader(new File(fname)));
             lnr.skip(Long.MAX_VALUE);
@@ -400,7 +335,7 @@ public class Main extends Application {
         }
     }
 
-    public static void ReadFile() {
+    public static void ReadFile() { //le do ficheiro e escreve para o array de objectos jogos
         int ct = 0;
         File fi = new File("logs.txt");
         int lnct = LineCounter("logs.txt");
@@ -431,8 +366,8 @@ public class Main extends Application {
 
     }
 
-    public static void BuildTable() {
-        //Changed
+    public static void BuildTable() { //criação de tabelas de pontuações
+
         table = new TableView();
         tabMelh = new Tab("Jogos");
         tabMelh.setClosable(false);
@@ -441,7 +376,6 @@ public class Main extends Application {
         ArrayList<String> temp = new ArrayList<>();
         String[] x1 = {"Nome", "Jogadas", "Modo de Jogo", "Duração", "Data", "Estado"};
         contAr[0] = x1;
-        //contAr[0] = x;
 
         for (int i = 0; i < default_package.Main.jogos.size(); i++) {
             String st = null;
