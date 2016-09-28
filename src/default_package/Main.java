@@ -18,6 +18,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -230,7 +231,7 @@ public class Main extends Application {
     public void AddButtons(String[] array) {
         ArrayList<String> arr = new ArrayList<String>(Arrays.asList(array));
 
-        //Collections.shuffle(arr); //introduz aleatoriadade
+        // Collections.shuffle(arr); //introduz aleatoriadade
         int j = 1, y = 1;
 
         for (int i = 0; i < 16; i++) {
@@ -239,11 +240,7 @@ public class Main extends Application {
 
             if (tipo.equals("Imagem")) {
                 arraycelula[i] = new Celula();
-                arraycelula[i].setStyle("-fx-background-image: url(file:" + arr.get(i)
-                        + "); "
-                        + "-fx-background-size: cover, auto;"
-                        + " -fx-text-fill:transparent;"
-                        + "-fx-fit-to-height: true;");
+                changeBtn(i, arr.get(i));
                 arraycelula[i].setNum(arr.get(i));
 
             } else {
@@ -290,26 +287,13 @@ public class Main extends Application {
                                     primeiro = arraycelula[id + 1].getNum();
                                     arraycelula[id + 1].setNum(click);
                                     if (default_package.Main.tipo.equals("Imagem")) {
-
-                                        arraycelula[id + 1].setStyle("-fx-background-image: url("
-                                                + "'file:" + click + "'"
-                                                + "); "
-                                                + "-fx-background-size: cover, auto;"
-                                                + " -fx-text-fill:transparent;"
-                                                + "-fx-fit-to-height: true;");
+                                        changeBtn(id + 1, click);
                                     }
                                     arraycelula[id + 1].setHole(false);
                                     arraycelula[id + 1].setMov(true);
                                     arraycelula[id].setNum(" ");
                                     if (default_package.Main.tipo.equals("Imagem")) {
-
-                                        arraycelula[id].setStyle("-fx-background-image: url("
-                                                + "'file:" + primeiro + "'"
-                                                + "); "
-                                                + "-fx-background-size: cover, auto;"
-                                                + " -fx-text-fill:transparent;"
-                                                + "-fx-fit-to-height: true;");
-
+                                        changeBtn(id, primeiro);
                                     }
                                     arraycelula[id].setHole(true);
                                     arraycelula[id].setMov(false);
@@ -327,25 +311,13 @@ public class Main extends Application {
                                     primeiro = arraycelula[id - 1].getNum();
                                     arraycelula[id - 1].setNum(click);
                                     if (default_package.Main.tipo.equals("Imagem")) {
-
-                                        arraycelula[id - 1].setStyle("-fx-background-image: url("
-                                                + "'file:" + click + "'"
-                                                + "); "
-                                                + "-fx-background-size: cover, auto;"
-                                                + " -fx-text-fill:transparent;"
-                                                + "-fx-fit-to-height: true;");
+                                        changeBtn(id - 1, click);
                                     }
                                     arraycelula[id - 1].setHole(false);
                                     arraycelula[id - 1].setMov(true);
                                     arraycelula[id].setNum(" ");
                                     if (default_package.Main.tipo.equals("Imagem")) {
-
-                                        arraycelula[id].setStyle("-fx-background-image: url("
-                                                + "'file:" + primeiro + "'"
-                                                + "); "
-                                                + "-fx-background-size: cover, auto;"
-                                                + " -fx-text-fill:transparent;"
-                                                + "-fx-fit-to-height: true;");
+                                        changeBtn(id, primeiro);
                                     }
                                     arraycelula[id].setHole(true);
                                     arraycelula[id].setMov(false);
@@ -361,31 +333,17 @@ public class Main extends Application {
                             primeiro = arraycelula[id + 4].getNum();
                             arraycelula[id + 4].setNum(click);
                             if (default_package.Main.tipo.equals("Imagem")) {
-
-                                arraycelula[id + 4].setStyle("-fx-background-image: url("
-                                        + "'file:" + click + "'"
-                                        + "); "
-                                        + "-fx-background-size: cover, auto;"
-                                        + " -fx-text-fill:transparent;"
-                                        + "-fx-fit-to-height: true;");
+                                changeBtn(id + 4, click);
                             }
                             arraycelula[id + 4].setHole(false);
                             arraycelula[id + 4].setMov(true);
                             arraycelula[id].setNum(" ");
                             if (default_package.Main.tipo.equals("Imagem")) {
-
-                                arraycelula[id].setStyle("-fx-background-image: url("
-                                        + "'file:" + primeiro + "'"
-                                        + "); "
-                                        + "-fx-background-size: cover, auto;"
-                                        + " -fx-text-fill:transparent;"
-                                        + "-fx-fit-to-height: true;");
-
+                                changeBtn(id, primeiro);
                             }
                             arraycelula[id].setHole(true);
                             arraycelula[id].setMov(false);
                             default_package.Actions.Validate();
-
                         }
                     } catch (IndexOutOfBoundsException erro) {
 
@@ -395,13 +353,7 @@ public class Main extends Application {
                             primeiro = arraycelula[id - 4].getNum();
                             arraycelula[id - 4].setNum(click);
                             if (default_package.Main.tipo.equals("Imagem")) {
-
-                                arraycelula[id - 4].setStyle("-fx-background-image: url("
-                                        + "'file:" + click + "'"
-                                        + "); "
-                                        + "-fx-background-size: cover, auto;"
-                                        + " -fx-text-fill:transparent;"
-                                        + "-fx-fit-to-height: true;");
+                                changeBtn(id - 4, click);
 
                             }
                             arraycelula[id - 4].setHole(false);
@@ -409,12 +361,7 @@ public class Main extends Application {
                             arraycelula[id].setNum(" ");
                             if (default_package.Main.tipo.equals("Imagem")) {
 
-                                arraycelula[id].setStyle("-fx-background-image: url("
-                                        + "'file:" + primeiro + "'"
-                                        + "); "
-                                        + "-fx-background-size: cover, auto;"
-                                        + " -fx-text-fill:transparent;"
-                                        + "-fx-fit-to-height: true;");
+                                changeBtn(id, primeiro);
 
                             }
                             arraycelula[id].setHole(true);
@@ -428,6 +375,17 @@ public class Main extends Application {
                 }
             });
         }
+
+    }
+
+    public static void changeBtn(int ids, String str) {
+
+        arraycelula[ids].setStyle("-fx-background-image: url("
+                + "'file:" + str + "'"
+                + "); "
+                + "-fx-background-size: cover, auto;"
+                + " -fx-text-fill:transparent;"
+                + "-fx-fit-to-height: true;");
 
     }
 
@@ -461,9 +419,7 @@ public class Main extends Application {
                     estado = br.readLine();
                     tipo = br.readLine();
                     tempJ = new Jogador(nome, data, Float.parseFloat(tempo));
-
                     jogos.add(new Jogo(tempJ, Integer.parseInt(jogadas), Boolean.parseBoolean(estado), tipo));
-
                     ct++;
                 }
                 br.close();

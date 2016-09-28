@@ -21,6 +21,7 @@ import java.util.Optional;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.PathTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -135,17 +136,13 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
 
         } else {
             event.consume();
-
         }
     }
 
     public static void erase() {
         for (int i = 0; i < 16; i++) {
-
-           
             File f1 = new File("img" + i + ".png");
             f1.delete();
-
         }
     }
 
@@ -187,7 +184,7 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
 
     }
 
-    public static void Validate() {
+    public static void Validate() { //metodo de validação
         Alert a = new Alert(AlertType.INFORMATION);
         String[] str = new String[16];
 
@@ -205,7 +202,6 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
                 break;
             }
             case "Imagem": {
-
                 str = Arrays.copyOf(default_package.Main.imgs, default_package.Main.imgs.length);
                 break;
             }
@@ -239,7 +235,7 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         count = 0;
     }
 
-    public static void Anim() {
+    public static void Anim() { //animação final
 
         ImageView ultimapeca = new ImageView();
         ultimapeca.setImage(new Image("file:img15.png"));
@@ -259,30 +255,25 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
         pathTransition.setCycleCount(1);
         pathTransition.setAutoReverse(true);
 
-        FadeTransition fadeTransition
-                = new FadeTransition(Duration.millis(1000), ultimapeca);
-        fadeTransition.setFromValue(1.0f);
-        fadeTransition.setToValue(0.0f);
-        fadeTransition.setCycleCount(1);
-        fadeTransition.setAutoReverse(true);
-
+        ScaleTransition scaleTransition
+                = new ScaleTransition(Duration.millis(2000), ultimapeca);
+        scaleTransition.setToX(0f);
+        scaleTransition.setToY(0f);
+        scaleTransition.setCycleCount(1);
+        scaleTransition.setAutoReverse(true);
         SequentialTransition sequentialTransition = new SequentialTransition();
         sequentialTransition.getChildren().addAll(
                 pathTransition,
-                fadeTransition);
-        sequentialTransition.setCycleCount(2);
+                scaleTransition);
+        sequentialTransition.setCycleCount(1);
         sequentialTransition.play();
-
         root.getChildren().add(ultimapeca);
-
         Timeline timeline = new Timeline(new KeyFrame(
                 Duration.millis(3200),
                 ae -> changelast()));
         timeline.play();
 
         btnstop();
-
-       
     }
 
     public static void changelast() {
@@ -297,7 +288,6 @@ public class Actions { //conversão de tempo no final - na salvaguarda de dados
     public static void btnstop() {
         for (Celula c : default_package.Main.arraycelula) {
             c.setOnAction(null);
-
         }
 
     }
